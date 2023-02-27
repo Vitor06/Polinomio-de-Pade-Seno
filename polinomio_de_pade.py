@@ -1,11 +1,12 @@
 from math import  sin,pi
 from matplotlib import pyplot as plt
 import numpy as np
+import tabulate
 
 #Constantes
 MIN = -pi/4
 MAX = pi/4
-STEP = 0.04
+STEP = 0.1
 K = 1/6
 M = 1/120
 N = 1/5040
@@ -29,16 +30,16 @@ def seno(x):
 #Seno truncado - Serie
 def seno_serie(x):
     return x - (pow(x,3)/6) + (pow(x,5)/120) - (pow(x,7)/5040) + (pow(x,9)/362880) - (pow(x,11)/39916800)
-    #x - x^3/6 + x^5/120 - x^7/5040 + x^9/362880 - x^11/39916800  = 
-    #x - x^3(1/6-x^2/120 +x^4/5040 - x^6/362880  +x^8/39916800) = 
+    #x - x^3/6 + x^5/120 - x^7/5040 + x^9/362880 - x^11/39916800  =
+    #x - x^3(1/6-x^2/120 +x^4/5040 - x^6/362880  +x^8/39916800) =
     #x - x^3(1/6-x^2(1/120 + x^2/5040 - x^4/362880 + x^6/39916800))=
-    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2/362880 + x^4/39916800))) = 
-    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2(1/362880 - x^2/39916800))) = 
-    # x(1 -x^2(1/6 - x^2(1/120 -x^2(1/5040 - x^2(1/362880 - x^2/39916800))))) = 
+    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2/362880 + x^4/39916800))) =
+    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2(1/362880 - x^2/39916800))) =
+    # x(1 -x^2(1/6 - x^2(1/120 -x^2(1/5040 - x^2(1/362880 - x^2/39916800))))) =
 
 #Seno truncado - Serie  - Multiplicações reduzidas
 def seno_serie_mult_reduzida(x):
-        return x*(1 - (x**2) *(K - (x**2) *(M -(x**2) *(N - (x**2) *(P - (x**2)*Q)))))  
+        return x*(1 - (x**2) *(K - (x**2) *(M -(x**2) *(N - (x**2) *(P - (x**2)*Q)))))
 
 def seno_pade(x):
     return x - (pow(x,3)/6) - (pow(x,7)/5040) #Rever #Fazer a redução de multiplicações
@@ -55,15 +56,21 @@ def main():
         seno_pade_list.append(seno_pade(x))
         x+=STEP
 
-    desenhar_ponto((x_list,seno_exato_list),"red","Seno_Exato",0,0)
-    desenhar_ponto((x_list,seno_pade_list),"blue","Pade",0,1)
-    desenhar_ponto((x_list,seno_serie_list),"green","Seno_Serie",1,0)
-    fig.delaxes(ax[1,1])
+    # desenhar_ponto((x_list,seno_exato_list),"red","Seno_Exato",0,0)
+    # desenhar_ponto((x_list,seno_pade_list),"blue","Pade",0,1)
+    # desenhar_ponto((x_list,seno_serie_list),"green","Seno_Serie",1,0)
+    # fig.delaxes(ax[1,1])
 
+    erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
+    erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
+    tabale_erro = zip(erro_seno_exato_serie,erro_seno_exato_pade)
+    headers_erro = ['Erro Seno Exato - Pade','Erro Seno Exato-Serie']
 
-    seno_serie_dict = dict(zip(x_list,seno_serie_list))
-    seno_exato_dict = dict(zip(x_list,seno_exato_list))
-    seno_pade_dict = dict(zip(x_list,seno_pade_list))
+    table = zip(seno_exato_list,seno_serie_list,seno_pade_list)
+    headers = ['Seno -Exato','Seno - serie' ,'Seno-Pade']
+    print(tabulate.tabulate(table,headers= headers))
+    print(tabulate.tabulate(tabale_erro,headers=headers_erro))
+
 
     print()
     print("Seno-Exato")
@@ -76,11 +83,12 @@ def main():
     print(seno_pade_list)
     print()
     print("Erro em relação a serie")
-    print(calacular_erro(seno_exato_list,seno_serie_list))
+    print()
+    print(erro_seno_exato_serie)
     print()
     print("Erro em relação a pade")
-    print(calacular_erro(seno_exato_list,seno_pade_list))
-    plt.show()
+    print(erro_seno_exato_pade)
+    # plt.show()
 
     # print("Seno - exato")
     # print(seno(4))
