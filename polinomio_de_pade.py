@@ -63,11 +63,11 @@ def main():
 
     erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
     erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
-    tabale_erro = zip(erro_seno_exato_serie,erro_seno_exato_pade)
-    headers_erro = ['Erro Seno Exato - Pade','Erro Seno Exato-Serie']
+    tabale_erro = zip(x_list,erro_seno_exato_serie,erro_seno_exato_pade)
+    headers_erro = ['X','Erro Seno Exato - Pade','Erro Seno Exato-Serie']
 
-    table = zip(seno_exato_list,seno_serie_list,seno_pade_list)
-    headers = ['Seno -Exato','Seno - serie' ,'Seno-Pade']
+    table = zip(x_list,seno_exato_list,seno_serie_list,seno_pade_list)
+    headers = ['X','Seno -Exato','Seno - serie' ,'Seno-Pade']
     print(tabulate.tabulate(table,headers= headers))
     print(tabulate.tabulate(tabale_erro,headers=headers_erro))
 
