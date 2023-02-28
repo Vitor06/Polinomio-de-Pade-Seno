@@ -1,8 +1,7 @@
 from math import  sin,pi
 from matplotlib import pyplot as plt
 import numpy as np
-import tabulate
-
+from prettytable import PrettyTable
 #Constantes
 MIN = -pi/4
 MAX = pi/4
@@ -13,6 +12,8 @@ N = 1/5040
 P =1/362880
 Q = 1/39916800
 fig, ax= plt.subplots(2, 2)
+table = PrettyTable()
+tabale_erro  =PrettyTable()
 
 def desenhar_ponto(ponto,color,text,i,j):
     ax[i,j].plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
@@ -63,13 +64,18 @@ def main():
 
     erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
     erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
-    tabale_erro = zip(x_list,erro_seno_exato_serie,erro_seno_exato_pade)
-    headers_erro = ['X','Erro Seno Exato - Pade','Erro Seno Exato-Serie']
 
-    table = zip(x_list,seno_exato_list,seno_serie_list,seno_pade_list)
-    headers = ['X','Seno -Exato','Seno - serie' ,'Seno-Pade']
-    print(tabulate.tabulate(table,headers= headers))
-    print(tabulate.tabulate(tabale_erro,headers=headers_erro))
+    tabale_erro.add_column('X',x_list)
+    tabale_erro.add_column('Erro Seno Exato - Serie',erro_seno_exato_serie)
+    tabale_erro.add_column('Erro Seno Exato-Pade',erro_seno_exato_pade)
+
+    table.add_column('X',x_list)
+    table.add_column('Seno -Exato',seno_exato_list)
+    table.add_column('Seno - serie',seno_serie_list)
+    table.add_column('Seno-Pade',seno_pade_list)
+
+    print(table)
+    print(tabale_erro)
 
 
     print()
