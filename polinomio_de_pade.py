@@ -46,7 +46,9 @@ def seno_serie_mult_reduzida(x):
         return x*(1 - (x**2) *(K - (x**2) *(M -(x**2) *(N - (x**2) *(P - (x**2)*Q)))))
 
 def seno_pade(x):
-    return x - (pow(x,3)/6) - (pow(x,7)/5040) #Rever #Fazer a redução de multiplicações
+    # return x - (pow(x,3)/6) - (pow(x,7)/5040)
+   #x*(1 - (x**2)*K- (x**6)*N)
+   return  x*(1 - (x**2)*(K +(x**4)*N))
 
 def main():
     x = MIN
@@ -115,13 +117,13 @@ def main():
     print(erro_seno_exato_pade)
     # plt.show()
 
-    # print("Seno - exato")
-    # print(seno(4))
-    # print()
-    # print("Seno_serie_reduzida")
-    # print(seno_serie_mult_reduzida(4))
-    # print()
-    # print("Seno_serie")
-    # print(seno_serie(4))
+    print("Seno - exato")
+    print(seno(pi/4))
+    print()
+    print("Seno_serie_reduzida")
+    print(seno_serie_mult_reduzida(pi/4))
+    print()
+    print("Seno_serie")
+    print(seno_serie(pi/4))
 
 main()
