@@ -1,4 +1,5 @@
 from math import  sin,pi
+import time
 from matplotlib import pyplot as plt
 import numpy as np
 from prettytable import PrettyTable
@@ -14,6 +15,8 @@ Q = 1/39916800
 fig, ax= plt.subplots(2, 2)
 table = PrettyTable()
 tabale_erro  =PrettyTable()
+tabale_tempo  =PrettyTable()
+
 
 def desenhar_ponto(ponto,color,text,i,j):
     ax[i,j].plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
@@ -47,20 +50,29 @@ def seno_pade(x):
 
 def main():
     x = MIN
-    seno_serie_list,seno_exato_list,seno_pade_list,x_list = [],[],[],[]
+    seno_serie_list,seno_exato_list,seno_pade_list,x_list,tempo_pade_list,tempo_serie_list = [],[],[],[],[],[]
 
     while x<=MAX:
+        start_seno_pade = time.time()
+        pade = seno_pade(x)
+        end_seno_pade = time.time()
+
+        tempo_pade_list.append(end_seno_pade -start_seno_pade)
+
+        start_seno_serie = time.time()
+        serie  =seno_serie(x)
+        end_seno_serie = time.time()
+
+        tempo_serie_list.append(end_seno_serie - start_seno_serie)
+
+        seno_ = seno(x)
 
         x_list.append(x)
-        seno_serie_list.append(seno_serie(x))#Mudar para  a reduzida
-        seno_exato_list.append(seno(x))
-        seno_pade_list.append(seno_pade(x))
+        seno_serie_list.append(serie)#Mudar para  a reduzida
+        seno_exato_list.append(seno_)
+        seno_pade_list.append(pade)
         x+=STEP
 
-    # desenhar_ponto((x_list,seno_exato_list),"red","Seno_Exato",0,0)
-    # desenhar_ponto((x_list,seno_pade_list),"blue","Pade",0,1)
-    # desenhar_ponto((x_list,seno_serie_list),"green","Seno_Serie",1,0)
-    # fig.delaxes(ax[1,1])
 
     erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
     erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
@@ -74,8 +86,15 @@ def main():
     table.add_column('Seno - serie',seno_serie_list)
     table.add_column('Seno-Pade',seno_pade_list)
 
+    tabale_tempo.add_column("X",x_list)
+    tabale_tempo.add_column("Tepo Serie",tempo_serie_list)
+    tabale_tempo.add_column("Tempo Pade",tempo_pade_list)
+
+
+
     print(table)
     print(tabale_erro)
+    print(tabale_tempo)
 
 
     print()
