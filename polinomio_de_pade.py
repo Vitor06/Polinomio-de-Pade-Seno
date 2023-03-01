@@ -1,18 +1,30 @@
 from math import  sin,pi
 import time
-from matplotlib import pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 from prettytable import PrettyTable
+import numpy as np
+
 #Constantes
 MIN = -pi/4
 MAX = pi/4
 STEP = 0.1
-K = 1/6
-M = 1/120
-N = 1/5040
-P =1/362880
-Q = 1/39916800
-fig, ax= plt.subplots(2, 2)
+
+K = 0.1666666666666667#-1/6
+M = 0.0083333333333333 #1/120
+N =  -1.984126984126984e-4 #-1/5040
+P = 2.755731922398589e-6 # 1/362880
+Q = -2.505210838544172e-8 #-1/39916800
+
+fig, ax= plt.subplots(2,2 )
+ax[0,0].set_xlim([MIN,MAX])
+ax[0,1].set_xlim([MIN,MAX])
+
+ax[0,0].set_yscale('log')
+ax[0,1].set_yscale('log')
+
+
 table = PrettyTable()
 tabale_erro  =PrettyTable()
 tabale_tempo  =PrettyTable()
@@ -43,27 +55,27 @@ def seno_serie(x):
 
 #Seno truncado - Serie  - Multiplicações reduzidas
 def seno_serie_mult_reduzida(x):
-        return x*(1 - (x**2) *(K - (x**2) *(M -(x**2) *(N - (x**2) *(P - (x**2)*Q)))))
+        return x*(1 + (x**2) *(K + (x**2) *(M +(x**2) *(N + (x**2) *(P + (x**2)*Q)))))
 
 def seno_pade(x):
-    # return x - (pow(x,3)/6) - (pow(x,7)/5040)
+   # return x - (pow(x,3)/6) - (pow(x,7)/5040)
    #x*(1 - (x**2)*K- (x**6)*N)
-   return  x*(1 - (x**2)*(K +(x**4)*N))
+   return  x*(1 + (x**2)*(K +(x**4)*N))
 
 def main():
     x = MIN
     seno_serie_list,seno_exato_list,seno_pade_list,x_list,tempo_pade_list,tempo_serie_list = [],[],[],[],[],[]
 
     while x<=MAX:
-        start_seno_pade = time.time()
+        start_seno_pade = time.time_ns()
         pade = seno_pade(x)
-        end_seno_pade = time.time()
+        end_seno_pade = time.time_ns()
 
         tempo_pade_list.append(end_seno_pade -start_seno_pade)
 
-        start_seno_serie = time.time()
+        start_seno_serie = time.time_ns()
         serie  =seno_serie(x)
-        end_seno_serie = time.time()
+        end_seno_serie = time.time_ns()
 
         tempo_serie_list.append(end_seno_serie - start_seno_serie)
 
@@ -74,7 +86,6 @@ def main():
         seno_exato_list.append(seno_)
         seno_pade_list.append(pade)
         x+=STEP
-
 
     erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
     erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
@@ -93,6 +104,10 @@ def main():
     tabale_tempo.add_column("Tempo Pade",tempo_pade_list)
 
 
+    desenhar_ponto((x_list,erro_seno_exato_serie),"green","Exato-Serie",0,0)
+    desenhar_ponto((x_list,erro_seno_exato_pade),"red","Exato-Pade",0,1)
+    fig.delaxes(ax[1,1])
+    fig.delaxes(ax[1,0])
 
     print(table)
     print(tabale_erro)
@@ -115,15 +130,20 @@ def main():
     print()
     print("Erro em relação a pade")
     print(erro_seno_exato_pade)
-    # plt.show()
-
+    plt.show()
+    print()
     print("Seno - exato")
     print(seno(pi/4))
     print()
     print("Seno_serie_reduzida")
     print(seno_serie_mult_reduzida(pi/4))
     print()
-    print("Seno_serie")
-    print(seno_serie(pi/4))
-
+    print("Seno_Pade")
+    print(seno_pade(pi/4))
+    print()
+    print("Erro Maximo - Pade")
+    print(max(seno_pade_list))
+    print()
+    print("Erro Maximo - Serie")
+    print(max(seno_serie_list))
 main()
