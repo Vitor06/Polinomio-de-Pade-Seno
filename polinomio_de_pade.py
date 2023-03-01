@@ -11,7 +11,7 @@ MIN = -pi/4
 MAX = pi/4
 STEP = 0.1
 
-K = 0.1666666666666667#-1/6
+K = -0.1666666666666667#-1/6
 M = 0.0083333333333333 #1/120
 N =  -1.984126984126984e-4 #-1/5040
 P = 2.755731922398589e-6 # 1/362880
@@ -74,7 +74,7 @@ def main():
         tempo_pade_list.append(end_seno_pade -start_seno_pade)
 
         start_seno_serie = time.time_ns()
-        serie  =seno_serie(x)
+        serie  =seno_serie_mult_reduzida(x)
         end_seno_serie = time.time_ns()
 
         tempo_serie_list.append(end_seno_serie - start_seno_serie)
