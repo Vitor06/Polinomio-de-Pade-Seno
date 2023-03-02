@@ -1,10 +1,7 @@
 from math import  sin,pi
 import time
-import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 from prettytable import PrettyTable
-import numpy as np
 
 #Constantes
 MIN = -pi/4
@@ -17,18 +14,18 @@ N =  -1.984126984126984e-4 #-1/5040
 P = 2.755731922398589e-6 # 1/362880
 Q = -2.505210838544172e-8 #-1/39916800
 
+#gráfico
 fig, ax= plt.subplots(2,2 )
 ax[0,0].set_xlim([MIN,MAX])
 ax[0,1].set_xlim([MIN,MAX])
 
-ax[0,0].set_yscale('log')
-ax[0,1].set_yscale('log')
+ax[0,0].set_yscale('symlog')
+ax[0,1].set_yscale('symlog')
 
-
+#tabelas
 table = PrettyTable()
 tabale_erro  =PrettyTable()
 tabale_tempo  =PrettyTable()
-
 
 def desenhar_ponto(ponto,color,text,i,j):
     ax[i,j].plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
@@ -103,6 +100,8 @@ def main():
     tabale_tempo.add_column("Tepo Serie",tempo_serie_list)
     tabale_tempo.add_column("Tempo Pade",tempo_pade_list)
 
+    ax[0,0].set_ylim([min(erro_seno_exato_serie),max(erro_seno_exato_serie)])
+    ax[0,1].set_ylim([min(erro_seno_exato_pade),max(erro_seno_exato_pade)])
 
     desenhar_ponto((x_list,erro_seno_exato_serie),"green","Exato-Serie",0,0)
     desenhar_ponto((x_list,erro_seno_exato_pade),"red","Exato-Pade",0,1)
@@ -112,7 +111,6 @@ def main():
     print(table)
     print(tabale_erro)
     print(tabale_tempo)
-
 
     print()
     print("Seno-Exato")
@@ -142,8 +140,9 @@ def main():
     print(seno_pade(pi/4))
     print()
     print("Erro Maximo - Pade")
-    print(max(seno_pade_list))
+    print(max(erro_seno_exato_pade))
     print()
     print("Erro Maximo - Serie")
-    print(max(seno_serie_list))
+    print(max(erro_seno_exato_serie))
+
 main()
