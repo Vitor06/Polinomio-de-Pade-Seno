@@ -10,7 +10,7 @@ STEP = 0.1
 
 K = -0.1666666666666667#-1/6
 M = 0.0083333333333333 #1/120
-N =  -1.984126984126984e-4 #-1/5040
+N =  -0.0001984126984126984 #-1/5040
 P = 2.755731922398589e-6 # 1/362880
 Q = -2.505210838544172e-8 #-1/39916800
 
@@ -79,7 +79,7 @@ def main():
         seno_ = seno(x)
 
         x_list.append(x)
-        seno_serie_list.append(serie)#Mudar para  a reduzida
+        seno_serie_list.append(serie)
         seno_exato_list.append(seno_)
         seno_pade_list.append(pade)
         x+=STEP
