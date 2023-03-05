@@ -2,6 +2,7 @@ from math import  sin,pi
 import time
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
+import csv
 
 #Constantes
 MIN = -pi/4
@@ -15,12 +16,12 @@ P = 2.755731922398589e-6 # 1/362880
 Q = -2.505210838544172e-8 #-1/39916800
 
 #gráfico
-fig, ax= plt.subplots(2,2 )
-ax[0,0].set_xlim([MIN,MAX])
-ax[0,1].set_xlim([MIN,MAX])
+# fig, ax= plt.subplots(2,2 )
+# ax[0,0].set_xlim([MIN,MAX])
+# ax[0,1].set_xlim([MIN,MAX])
 
-ax[0,0].set_yscale('symlog')
-ax[0,1].set_yscale('symlog')
+# ax[0,0].set_yscale('symlog')
+# ax[0,1].set_yscale('symlog')
 
 #tabelas
 table = PrettyTable()
@@ -28,9 +29,10 @@ tabale_erro  =PrettyTable()
 tabale_tempo  =PrettyTable()
 
 def desenhar_ponto(ponto,color,text,i,j):
-    ax[i,j].plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
-    ax[i,j].set_title(text)
+    plt.plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
+    # plt.set_title(text)
     plt.legend()
+
 
 def calacular_erro(seno_exato,seno_aproximado):
     erro_list = []
@@ -58,7 +60,6 @@ def seno_pade(x):
    # return x - (pow(x,3)/6) - (pow(x,7)/5040)
    #x*(1 - (x**2)*K- (x**6)*N)
    return  x*(1 + (x**2)*(K +(x**4)*N))
-
 def main():
     x = MIN
     seno_serie_list,seno_exato_list,seno_pade_list,x_list,tempo_pade_list,tempo_serie_list = [],[],[],[],[],[]
@@ -100,13 +101,15 @@ def main():
     tabale_tempo.add_column("Tepo Serie",tempo_serie_list)
     tabale_tempo.add_column("Tempo Pade",tempo_pade_list)
 
-    ax[0,0].set_ylim([min(erro_seno_exato_serie),max(erro_seno_exato_serie)])
-    ax[0,1].set_ylim([min(erro_seno_exato_pade),max(erro_seno_exato_pade)])
+    # plt.set_ylim([min(erro_seno_exato_serie),max(erro_seno_exato_serie)])
+    # plt.set_ylim([min(erro_seno_exato_pade),max(erro_seno_exato_pade)])
 
     desenhar_ponto((x_list,erro_seno_exato_serie),"green","Exato-Serie",0,0)
+    plt.show()
     desenhar_ponto((x_list,erro_seno_exato_pade),"red","Exato-Pade",0,1)
-    fig.delaxes(ax[1,1])
-    fig.delaxes(ax[1,0])
+    plt.show()
+    # fig.delaxes(ax[1,1])
+    # fig.delaxes(ax[1,0])
 
     print(table)
     print(tabale_erro)
@@ -128,7 +131,6 @@ def main():
     print()
     print("Erro em relação a pade")
     print(erro_seno_exato_pade)
-    plt.show()
     print()
     print("Seno - exato")
     print(seno(pi/4))
