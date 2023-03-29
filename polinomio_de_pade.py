@@ -15,6 +15,12 @@ N =  -0.0001984126984126984 #-1/5040
 P = 2.755731922398589e-6 # 1/362880
 Q = -2.505210838544172e-8 #-1/39916800
 
+D = -0.1460606060606061
+E = 0.0050589225589225
+F =-0.0005335097000176
+G = 0.0206060606060606
+H =0.00015993265993265
+
 #gráfico
 # fig, ax= plt.subplots(2,2 )
 # ax[0,0].set_xlim([MIN,MAX])
@@ -28,8 +34,8 @@ table = PrettyTable()
 tabale_erro  =PrettyTable()
 tabale_tempo  =PrettyTable()
 
-def desenhar_ponto(ponto,color,text,i,j):
-    plt.plot(ponto[0], ponto[1], marker="o", markersize=5, markeredgecolor=color, markerfacecolor=color,label=text,)#Posicao real
+def desenhar_ponto(ponto,color,text):
+    plt.plot(ponto[0], ponto[1], markerfacecolor=color,label=text,)#Posicao real
     # plt.set_title(text)
     plt.legend()
 
@@ -42,24 +48,14 @@ def calacular_erro(seno_exato,seno_aproximado):
 #Seno Correto
 def seno(x):
     return sin(x)
-#Seno truncado - Serie
-def seno_serie(x):
-    return x - (pow(x,3)/6) + (pow(x,5)/120) - (pow(x,7)/5040) + (pow(x,9)/362880) - (pow(x,11)/39916800)
-    #x - x^3/6 + x^5/120 - x^7/5040 + x^9/362880 - x^11/39916800  =
-    #x - x^3(1/6-x^2/120 +x^4/5040 - x^6/362880  +x^8/39916800) =
-    #x - x^3(1/6-x^2(1/120 + x^2/5040 - x^4/362880 + x^6/39916800))=
-    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2/362880 + x^4/39916800))) =
-    # x -x^3(1/6 - x^2(1/120 +x^2(1/5040 - x^2(1/362880 - x^2/39916800))) =
-    # x(1 -x^2(1/6 - x^2(1/120 -x^2(1/5040 - x^2(1/362880 - x^2/39916800))))) =
 
 #Seno truncado - Serie  - Multiplicações reduzidas
-def seno_serie_mult_reduzida(x):
+def seno_horner(x):
         return x*(1 + (x**2) *(K + (x**2) *(M +(x**2) *(N + (x**2) *(P + (x**2)*Q)))))
 
 def seno_pade(x):
-   # return x - (pow(x,3)/6) - (pow(x,7)/5040)
-   #x*(1 - (x**2)*K- (x**6)*N)
-   return  x*(1 + (x**2)*(K +(x**4)*N))
+
+   return  (x*(1+(x**2)*(D+(x**2)*(E+F*(x**2)) )))/(1+(x**2)*(G +H*x**2))
 def main():
     x = MIN
     seno_serie_list,seno_exato_list,seno_pade_list,x_list,tempo_pade_list,tempo_serie_list = [],[],[],[],[],[]
@@ -72,7 +68,7 @@ def main():
         tempo_pade_list.append(end_seno_pade -start_seno_pade)
 
         start_seno_serie = time.time_ns()
-        serie  =seno_serie_mult_reduzida(x)
+        serie  =seno_horner(x)
         end_seno_serie = time.time_ns()
 
         tempo_serie_list.append(end_seno_serie - start_seno_serie)
@@ -84,6 +80,28 @@ def main():
         seno_exato_list.append(seno_)
         seno_pade_list.append(pade)
         x+=STEP
+
+    #Calculando para MAX = pi/4
+    start_seno_pade = time.time_ns()
+    pade = seno_pade(MAX)
+    end_seno_pade = time.time_ns()
+
+    tempo_pade_list.append(end_seno_pade -start_seno_pade)
+
+    start_seno_serie = time.time_ns()
+    serie  =seno_horner(MAX)
+    end_seno_serie = time.time_ns()
+
+    tempo_serie_list.append(end_seno_serie - start_seno_serie)
+
+    seno_ = seno(MAX)
+
+    x_list.append(x)
+    seno_serie_list.append(serie)
+    seno_exato_list.append(seno_)
+    seno_pade_list.append(pade)
+
+
 
     erro_seno_exato_serie = calacular_erro(seno_exato_list,seno_serie_list)
     erro_seno_exato_pade  = calacular_erro(seno_exato_list,seno_pade_list)
@@ -104,9 +122,11 @@ def main():
     # plt.set_ylim([min(erro_seno_exato_serie),max(erro_seno_exato_serie)])
     # plt.set_ylim([min(erro_seno_exato_pade),max(erro_seno_exato_pade)])
 
-    desenhar_ponto((x_list,erro_seno_exato_serie),"green","Exato-Serie",0,0)
-    plt.show()
-    desenhar_ponto((x_list,erro_seno_exato_pade),"red","Exato-Pade",0,1)
+    plt.plot(x_list,erro_seno_exato_pade,label = "Exato-Pade")
+    plt.plot(x_list,erro_seno_exato_serie,label = "Exato-Serie")
+
+    plt.xlabel('Argumento')
+    plt.ylabel('Erro')
     plt.show()
     # fig.delaxes(ax[1,1])
     # fig.delaxes(ax[1,0])
@@ -136,7 +156,7 @@ def main():
     print(seno(pi/4))
     print()
     print("Seno_serie_reduzida")
-    print(seno_serie_mult_reduzida(pi/4))
+    print(seno_horner(pi/4))
     print()
     print("Seno_Pade")
     print(seno_pade(pi/4))
