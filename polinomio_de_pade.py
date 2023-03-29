@@ -127,6 +127,8 @@ def main():
 
     plt.xlabel('Argumento')
     plt.ylabel('Erro')
+    plt.legend()
+
     plt.show()
     # fig.delaxes(ax[1,1])
     # fig.delaxes(ax[1,0])
