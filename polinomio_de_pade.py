@@ -1,9 +1,11 @@
+from ctypes import c_float
+from decimal import *
 from math import  sin,pi
 import time
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
+from mpmath import mp
 import csv
-
 #Constantes
 MIN = -pi/4
 MAX = pi/4
@@ -15,11 +17,11 @@ N =  -0.0001984126984126984 #-1/5040
 P = 2.755731922398589e-6 # 1/362880
 Q = -2.505210838544172e-8 #-1/39916800
 
-D = -0.1460606060606061
-E = 0.0032744107744108
-F =-0.0005335097000176
-G = 0.0206060606060606
-H =0.00015993265993265
+D =-0.14606060606060606060606060606061 #-241/1650
+E =  0.00505892255892255892255892255892 #601/118800#
+F = -5.3350970017636684303350970017637e-5 #-121/2268000#
+G =0.02060606060606060606060606060606  #17/825#
+H =1.5993265993265993265993265993266e-4 #19/118800#
 
 #gráfico
 # fig, ax= plt.subplots(2,2 )
@@ -51,11 +53,13 @@ def seno(x):
 
 #Seno truncado - Serie  - Multiplicações reduzidas
 def seno_horner(x):
+
         return x*(1 + (x**2) *(K + (x**2) *(M +(x**2) *(N + (x**2) *(P + (x**2)*Q)))))
 
 def seno_pade(x):
+   y = x**2
+   return  (x*(1.0+(y*(D+(y*(E+(F*y))) ))))/(1.0+(y*(G +(H*y))))
 
-   return  (x*(1+(x**2)*(D+(x**2)*(E+F*(x**2)) )))/(1+(x**2)*(G +H*(x**2)))
 def main():
     x = MIN
     seno_serie_list,seno_exato_list,seno_pade_list,x_list,tempo_pade_list,tempo_serie_list = [],[],[],[],[],[]
